@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "yourdockerhubusername/sample-app"
+        DOCKER_IMAGE = "venkatesh1409/sample-app"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/yourusername/sample-app.git'
+                git 'https://github.com/iam-venkateshwarlu/sample-app.git'
             }
         }
 
@@ -22,7 +22,7 @@ pipeline {
 
         stage('Push to DockerHub') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
+                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/']) {
                     script {
                         docker.image("${DOCKER_IMAGE}:latest").push()
                     }
