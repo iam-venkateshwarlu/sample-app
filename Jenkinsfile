@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'venkatesh1409/sample-app'
         DOCKER_TAG = 'latest'
-        DOCKER_CREDENTIALS_ID = 'docker-hub-creds'  // Replace with your Jenkins credentials ID
+        DOCKER_CREDENTIALS_ID = 'Docker-hub'  // Replace with your Jenkins credentials ID
     }
 
     stages {
