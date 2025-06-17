@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/iam-venkateshwarlu/sample-app.git'
+                checkout scm
+                //git branch: 'main', url: 'https://github.com/iam-venkateshwarlu/sample-app.git'
             }
         }
 
@@ -17,7 +18,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build') {
             steps {
                 sh 'npm run build'
             }
