@@ -11,7 +11,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'sudo apt install npm'
+                sh 'sudo apt update && sudo apt install -y npm'
                 sh 'npm test'
                 // Run your tests inside the docker container
                 // sh "docker run --rm ${DOCKER_IMAGE}:${DOCKER_TAG} ./run-tests.sh"
