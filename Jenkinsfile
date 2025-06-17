@@ -4,10 +4,18 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'venkatesh1409/sample-app'
         DOCKER_TAG = 'latest'
-        DOCKER_CREDENTIALS_ID = 'Docker-hub'  // Replace with your Jenkins credentials ID
+        DOCKER_CREDENTIALS_ID = 'Docker-hub'
     }
 
     stages {
+        stage('Debug Docker Access') {
+            steps {
+                sh 'echo "PATH: $PATH"'
+                sh 'which docker || echo "Docker not found"'
+                sh 'docker --version || echo "Docker not available"'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -16,9 +24,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                }
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
             }
         }
 
