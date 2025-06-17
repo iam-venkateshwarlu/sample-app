@@ -29,11 +29,13 @@ pipeline {
 
         stage('Push to DockerHub') {
             steps {
-                docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
                         dockerImage.push()
-                }
             }
         }
+    }
+}
 
         // stage('Deploy to Kubernetes') {
         //     steps {
