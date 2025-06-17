@@ -8,10 +8,10 @@ pipeline {
                 //git branch: 'main', url: 'https://github.com/iam-venkateshwarlu/sample-app.git'
             }
         }
-        
+
         stage('Build') {
             steps {
-                sh 'npm run build'
+                sh 'npm run start'
             }
         }
     }
