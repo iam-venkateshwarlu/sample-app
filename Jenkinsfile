@@ -2,7 +2,7 @@ pipeline {
     agent { label 'docker' }  // Make sure this node has Docker installed
 
     environment {
-        DOCKER_IMAGE = "iam-venkateshwarlu/sample-app"
+        DOCKER_IMAGE = "venkatesh1409/sample-app"
         DOCKER_TAG = "${env.BUILD_NUMBER}"
     }
 
