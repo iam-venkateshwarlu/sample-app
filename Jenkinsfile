@@ -1,42 +1,54 @@
 pipeline {
-    agent any
+    agent { label 'docker' }  // Make sure this node has Docker installed
 
     environment {
-        DOCKER_IMAGE = "venkatesh1409/sample-app"
+        DOCKER_IMAGE = "iam-venkateshwarlu/sample-app"
+        DOCKER_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/iam-venkateshwarlu/sample-app.git'
+                git branch: 'main', url: 'https://github.com/iam-venkateshwarlu/sample-app.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}:latest")
+                    // Build docker image with tag = build number
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
                 }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run your tests inside the docker container
+                sh "docker run --rm ${DOCKER_IMAGE}:${DOCKER_TAG} ./run-tests.sh"
             }
         }
 
         stage('Push to DockerHub') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
-                    script {
-                        docker.image("${DOCKER_IMAGE}:latest").push()
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                        dockerImage.push()
                     }
                 }
             }
         }
 
+        // Uncomment and update if you want to deploy to Kubernetes
+        /*
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
                 kubectl config use-context your-cluster
-                kubectl set image deployment/sample-app-deployment sample-app=${DOCKER_IMAGE}:latest
+                kubectl set image deployment/sample-app-deployment sample-app=${DOCKER_IMAGE}:${DOCKER_TAG}
                 '''
             }
         }
+        */
     }
 }
