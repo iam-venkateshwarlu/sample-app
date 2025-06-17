@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "venkatesh1409/sample-app"
+        DOCKER_TAG = "latest"
     }
 
     stages {
@@ -15,7 +16,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}:latest .")
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}}", '-f Dockerfile .')
                 }
             }
         }
