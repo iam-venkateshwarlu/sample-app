@@ -2,42 +2,32 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'venkatesh1409/sample-app'
-        DOCKER_TAG = 'latest'
-        DOCKER_CREDENTIALS_ID = 'Docker-hub'
+        DOCKER_IMAGE = "venkatesh1409/sample-app"
+        DOCKER_CREDENTIALS_ID = "docker-hub-credentials"
     }
 
     stages {
-        stage('Debug Docker Access') {
-            steps {
-                sh 'echo "PATH: $PATH"'
-                sh 'which docker || echo "Docker not found"'
-                sh 'docker --version || echo "Docker not available"'
-            }
-        }
-
         stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/iam-venkateshwarlu/sample-app.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                script {
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+                }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID,
-                                                 usernameVariable: 'DOCKER_USER',
-                                                 passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                        docker logout
-                    '''
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                        dockerImage.push()
+                        dockerImage.push("latest")
+                    }
                 }
             }
         }
